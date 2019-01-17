@@ -14,7 +14,7 @@ class Database {
             //this.initDefaultSchema();
         }).catch(reason => {
             console.err(reason);
-        })
+        });
     }
 
     connectDatabase() {
@@ -58,9 +58,9 @@ class Database {
         });
     }
 
-    createUser(username, password) {
+    createUser(username, passwordData) {
         return new Promise((resolve, reject) => {
-            con.query('INSERT INTO user (username, password) VALUES (?, ?)', [username, password], (err, results) => {
+            con.query('INSERT INTO user (username, password, salt) VALUES (?, ?, ?)', [username, passwordData.passwordHash, passwordData.salt], (err, results) => {
                 if (err) {
                     console.error(err);
                     reject('creating user failed');
@@ -71,86 +71,139 @@ class Database {
         });
     }
 
-    checkUser(username, password) {
+    checkUser(username) {
         return new Promise((resolve, reject) => {
-            con.query('SELECT COUNT(*) as count FROM user WHERE username=? AND password=?', [username, password], (err, results) => {
+            con.query('SELECT password, salt FROM user WHERE username=? LIMIT 1', [username], (err, results) => {
                 if (err) {
                     console.error(err);
                     reject('error checking user');
                     return;
                 }
-                if (results[0].count > 0) {
-                    resolve('correct credentials');
+                if (results[0]) {
+                    resolve(results[0]);
                     return;
                 }
-                reject('wrong username or password');
+                reject('no such user');
             });
         });
     }
 
-    generateToken(username) {
-        let highSecurityToken = Math.random().toString(36).substr(2);
+    book(user, date, text, amount, type) {
         return new Promise((resolve, reject) => {
-            con.query('UPDATE user SET token =? WHERE username =?', [highSecurityToken, username], (err, results) => {
+            con.query(`INSERT INTO spendings 
+                            (date, text, type, amount, user) VALUES (?, ?, ?, ?, ?)`,
+                [date, text, type, amount, user],
+                (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        reject('could not persist data');
+                        return;
+                    }
+                    resolve('booking was successfull');
+                });
+        });
+    }
+
+    deleteBooking(user, id) {
+        return new Promise((resolve, reject) => {
+            con.query(`DELETE FROM spendings WHERE user=? and id=?`, [user, id], (err, results) => {
                 if (err) {
                     console.error(err);
-                    reject('error writing token');
-                }
-                resolve({ token: highSecurityToken, message: 'token was successfully generated' });
-            });
-        });
-    }
-
-    checkAuthorization(token) {
-        return new Promise((resolve, reject) => {
-            con.query('SELECT id FROM user WHERE token=?', [token], (err, results) => {
-                if (err || results.length === 0) {
-                    console.error(err);
-                    reject('user not logged in');
+                    reject('error deleting booking for user');
                     return;
                 }
-                resolve(results[0].id);
+                if (results) {
+                    resolve(results);
+                    return;
+                }
+                reject('error deleting booking for user');
             });
         });
     }
 
-    book(token, date, text, amount, type) {
+    getAllBookings(user) {
         return new Promise((resolve, reject) => {
-            this.checkAuthorization(token)
-                .then((id) => {
-                    con.query(`INSERT INTO spendings 
-                            (date, text, type, amount, user_id) VALUES (?, ?, ?, ?, ?)`,
-                        [date, text, type, amount, id],
-                        (err, results) => {
-                            if (err) {
-                                console.error(err);
-                                reject('could not persist data');
-                                return;
-                            }
-                            resolve('booking was successfull');
-                        });
-                })
-                .catch((err) => {
-                    reject(err);
-                });
+            con.query(`SELECT id, date, text, amount, type
+             FROM spendings WHERE user=?`, [user], (err, results) => {
+                if (err) {
+                    console.error(err);
+                    reject('error getting bookings for user');
+                    return;
+                }
+                if (results) {
+                    resolve(results);
+                    return;
+                }
+                reject('error getting bookings for user');
+            });
         });
+    }
+    getBookingsForType(user, type) { 
+        return new Promise((resolve, reject) => {
+            con.query(`SELECT id, date, text, amount, type
+             FROM spendings WHERE user=? AND type=?`, [user, type], (err, results) => {
+                if (err) {
+                    console.error(err);
+                    reject('error getting bookings user');
+                    return;
+                }
+                if (results) {
+                    resolve(results);
+                    return;
+                }
+                reject('error getting bookings for user');
+            });
+        });
+    }
+    getBookingsForDate(user, dateFrom, dateTo) { 
+        return new Promise((resolve, reject) => {
+            con.query(`SELECT id, date, text, amount, type
+             FROM spendings WHERE user=? AND 
+             (date BETWEEN ? AND ?)`, [user, dateFrom, dateTo], (err, results) => {
+                if (err) {
+                    console.error(err);
+                    reject('error getting bookings user');
+                    return;
+                }
+                if (results) {
+                    resolve(results);
+                    return;
+                }
+                reject('error getting bookings for user');
+            });
+        });
+    }
+    getBookingsForDateAndType(user, dateFrom, dateTo, type) {
+        return new Promise((resolve, reject) => {
+            con.query(`SELECT id, date, text, amount, type
+             FROM spendings WHERE user=? AND 
+             (date BETWEEN ? AND ?) AND type=?`, [user, dateFrom, dateTo, type], (err, results) => {
+                if (err) {
+                    console.error(err);
+                    reject('error getting bookings user');
+                    return;
+                }
+                if (results) {
+                    resolve(results);
+                    return;
+                }
+                reject('error getting bookings for user');
+            });
+        });
+     }
+    getBookings(user, dateFrom, dateTo, type) { 
+        if(dateFrom && dateTo) {
+            if(type) {
+                return this.getBookingsForDateAndType(user, dateFrom, dateTo, type);
+            }
+            return this.getBookingsForDate(user, dateFrom, dateTo);
+        }
+        if(type) {
+            return this.getBookingsForType(user, type);
+        }
+        return this.getAllBookings(user);
     }
 
-    getBookings(token) {
-        return new Promise((resolve, reject) => {
-            this.checkAuthorization(token)
-                .then((id) => {
-                    
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
-    }
-    getBookings(token, type) {}
-    getBookings(token, dateFrom, dateTo) {}
-    getBookings(token, dateFrom, dateTo, type) {}
-    
 }
 
 module.exports = Database;
