@@ -121,6 +121,23 @@ class Database {
         });
     }
 
+    updateBooking(user, id, date, text, amount, type) {
+        return new Promise((resolve, reject) => {
+            con.query(`UPDATE spendings 
+                        SET date=?, text=?, amount=?, type=? 
+                        WHERE id=? AND user=?`,
+                [date, text, amount, type, id, user],
+                (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        reject('error updating booking for user');
+                        return;
+                    }
+                    resolve('booking was successfully udpated');
+                });
+        });
+    }
+
     getAllBookings(user) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type

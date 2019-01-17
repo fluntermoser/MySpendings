@@ -73,7 +73,7 @@ router.post('/book', function (req, res) {
         })
 });
 
-router.post('/getbookings', function (req, res) {
+router.post('/get', function (req, res) {
     verifyToken(req)
         .then(decoded => {
             let datefrom = req.body.datefrom;
@@ -95,7 +95,31 @@ router.post('/getbookings', function (req, res) {
         })
 });
 
-router.post('/deletebooking', function (req, res) {
+router.post('/update', function (req, res) {
+    verifyToken(req)
+        .then(decoded => {
+            let date = req.body.date;
+            let text = req.body.text;
+            let amount = req.body.amount;
+            let type = req.body.type;
+            let id = req.body.id;
+            database.updateBooking(decoded.id, id, date, text, amount, type)
+                .then((result) => {
+                    res.status(200).send('Booking updated.');
+                })
+                .catch((err) => {
+                    console.log("error " + err);
+                    res.status(500).send('Unable to update booking');
+                });
+        })
+        .catch(reason => {
+            console.log(reason);
+            res.status(401).send({ auth: false, message: reason });
+            return;
+        })
+});
+
+router.post('/delete', function (req, res) {
     verifyToken(req)
         .then(decoded => {
             let id = req.body.id;
