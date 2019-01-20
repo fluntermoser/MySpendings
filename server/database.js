@@ -220,7 +220,6 @@ class Database {
         }
         return this.getAllBookings(user);
     }
-
 }
 
 module.exports = Database;
