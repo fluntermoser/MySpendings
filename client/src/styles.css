@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css');
+
+.card {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+}
+
+.btn {
+    margin-left: 10px;
+    margin-right: 10px;
+}

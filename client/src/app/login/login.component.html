@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-body">
+  <h2 class="card-title">Login</h2>
+  <form #login="ngForm">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" required
+      [(ngModel)]="model.username" name="username">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" 
+      [(ngModel)]="model.password" name="password">
+    </div>
+
+    <button type="submit" class="btn btn-success" (click)="onLogin()"[disabled]="!login.form.valid">Login</button>
+    <button  class="btn btn-success" (click)="onSwitchToRegister()">Register</button>
+
+  </form>
+  </div>
+</div>

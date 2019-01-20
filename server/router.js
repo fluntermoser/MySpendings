@@ -8,6 +8,12 @@ var Crypto = require('./crypto.js');
 var router = express.Router();
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, x-access-token, Content-Type, Accept");
+    next();
+});
+
 var database = new Database();
 var crypto = new Crypto();
 
@@ -25,7 +31,7 @@ router.post('/register', function (req, res) {
         })
         .catch((error) => {
             console.error(error);
-            res.status(400).send('unable to create user');
+            res.status(400).send('Unable to create user');
         });
 });
 
@@ -86,6 +92,25 @@ router.post('/get', function (req, res) {
                 .catch((err) => {
                     console.log("error " + err);
                     res.status(500).send('Unable to get bookings');
+                });
+        })
+        .catch(reason => {
+            console.log(reason);
+            res.status(401).send({ auth: false, message: reason });
+            return;
+        })
+});
+
+router.post('/balance', function (req, res) {
+    verifyToken(req)
+        .then(decoded => {
+            database.getBalance(decoded.id)
+                .then((result) => {
+                    res.status(200).send(result);
+                })
+                .catch((err) => {
+                    console.log("error " + err);
+                    res.status(500).send('Unable to get balance');
                 });
         })
         .catch(reason => {

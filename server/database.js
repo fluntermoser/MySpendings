@@ -138,56 +138,78 @@ class Database {
         });
     }
 
+    getBalance(user) {
+        return new Promise((resolve, reject) => {
+            con.query(`SELECT SUM(sum) as balance from 
+                (SELECT SUM(amount) as sum from spendings WHERE type=1 and user=? 
+                    GROUP BY type 
+                UNION ALL 
+                SELECT 0 - SUM(amount) as sum from spendings WHERE type=0 and user=? 
+                GROUP BY type) as temp`, [user, user], (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings for user');
+                        return;
+                    }
+                    if (results[0]) {
+                        resolve(results[0]);
+                        return;
+                    }
+                    reject('error getting bookings for user');
+                });
+        });
+    }
+
     getAllBookings(user) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=?`, [user], (err, results) => {
-                if (err) {
-                    console.error(err);
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings for user');
+                        return;
+                    }
+                    if (results) {
+                        resolve(results);
+                        return;
+                    }
                     reject('error getting bookings for user');
-                    return;
-                }
-                if (results) {
-                    resolve(results);
-                    return;
-                }
-                reject('error getting bookings for user');
-            });
+                });
         });
     }
-    getBookingsForType(user, type) { 
+    getBookingsForType(user, type) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=? AND type=?`, [user, type], (err, results) => {
-                if (err) {
-                    console.error(err);
-                    reject('error getting bookings user');
-                    return;
-                }
-                if (results) {
-                    resolve(results);
-                    return;
-                }
-                reject('error getting bookings for user');
-            });
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings user');
+                        return;
+                    }
+                    if (results) {
+                        resolve(results);
+                        return;
+                    }
+                    reject('error getting bookings for user');
+                });
         });
     }
-    getBookingsForDate(user, dateFrom, dateTo) { 
+    getBookingsForDate(user, dateFrom, dateTo) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=? AND 
              (date BETWEEN ? AND ?)`, [user, dateFrom, dateTo], (err, results) => {
-                if (err) {
-                    console.error(err);
-                    reject('error getting bookings user');
-                    return;
-                }
-                if (results) {
-                    resolve(results);
-                    return;
-                }
-                reject('error getting bookings for user');
-            });
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings user');
+                        return;
+                    }
+                    if (results) {
+                        resolve(results);
+                        return;
+                    }
+                    reject('error getting bookings for user');
+                });
         });
     }
     getBookingsForDateAndType(user, dateFrom, dateTo, type) {
@@ -195,27 +217,27 @@ class Database {
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=? AND 
              (date BETWEEN ? AND ?) AND type=?`, [user, dateFrom, dateTo, type], (err, results) => {
-                if (err) {
-                    console.error(err);
-                    reject('error getting bookings user');
-                    return;
-                }
-                if (results) {
-                    resolve(results);
-                    return;
-                }
-                reject('error getting bookings for user');
-            });
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings user');
+                        return;
+                    }
+                    if (results) {
+                        resolve(results);
+                        return;
+                    }
+                    reject('error getting bookings for user');
+                });
         });
-     }
-    getBookings(user, dateFrom, dateTo, type) { 
-        if(dateFrom && dateTo) {
-            if(type) {
+    }
+    getBookings(user, dateFrom, dateTo, type) {
+        if (dateFrom && dateTo) {
+            if (type) {
                 return this.getBookingsForDateAndType(user, dateFrom, dateTo, type);
             }
             return this.getBookingsForDate(user, dateFrom, dateTo);
         }
-        if(type) {
+        if (type) {
             return this.getBookingsForType(user, type);
         }
         return this.getAllBookings(user);

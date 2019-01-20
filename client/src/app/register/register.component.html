@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-body">
+    <h2 class="card-title">Register</h2>
+    <form #login="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" required
+        [(ngModel)]="model.username" name="username">
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" 
+        [(ngModel)]="model.password" name="password">
+      </div>
+
+      <div class="form-group">
+          <label for="password-2">Repeat Password</label>
+          <input type="password" class="form-control" id="password-2" 
+          [(ngModel)]="model.password2" name="password-2">
+        </div>
+  
+      <button type="submit" class="btn btn-success" (click)="onRegister()"[disabled]="!login.form.valid">Register</button>
+      <button  class="btn btn-success" (click)="onBack()">Back ...</button>
+  
+    </form>
+    </div>
+  </div>
