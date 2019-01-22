@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Balance } from './balance';
+import { Booking } from './booking';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,46 @@ export class WebinterfaceService {
         }
       });
   }
+
+ book(date: string, text: string, amount: number, type: number) {
+    return this.http.post<Token>(this.api + '/book', { date, text, amount, type }, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      ).subscribe(token => {
+        if (token.auth) {
+          this.authService.authenticate(token);
+          this.router.navigate(['new']);
+        }
+      });
+  }
+
+  update(id: number, date: string, text: string, amount: number, type: number) {
+    return this.http.post<Token>(this.api + '/update', { id, date, text, amount, type }, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      ).subscribe(token => {
+        if (token.auth) {
+          this.authService.authenticate(token);
+          this.router.navigate(['update']);
+        }
+      });
+  }
+
+  delete(id: number) {
+    return this.http.post<Token>(this.api + '/update', { id }, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      ).subscribe(token => {
+        if (token.auth) {
+          this.authService.authenticate(token);
+          this.router.navigate(['delete']);
+        }
+      });
+  }
+
+  getBookings(dateFrom: string, dateTo: string, type: number): Observable<Booking> {
+    return this.http.post<Booking>(this.api + '/get', { dateFrom, dateTo, type }, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      );
+  }
+  
 
   getBalance(): Observable<Balance> {
     return this.http.post<Balance>(this.api + '/balance',{}, this.getHttpOptions())

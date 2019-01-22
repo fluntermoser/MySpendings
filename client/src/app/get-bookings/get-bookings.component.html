@@ -1,0 +1,11 @@
+<h2>Show bookings</h2>
+<p>{{booking.date}}</p>
+<div class="container">
+    <ul class="bookings">
+      <li *ngFor="let booking of bookings">
+        <span class="badge">{{booking.date}}</span>
+      </li>
+    </ul>
+  </div>
+<button  class="btn btn-getbooking" (click)="onShowAll()">Show all bookings</button>
+<button  class="btn btn-getbooking" (click)="onSelectBookings()">Select bookings</button>

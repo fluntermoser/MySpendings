@@ -34,8 +34,16 @@ export class OverviewComponent implements OnInit {
     this.router.navigate(['new']);
   }
 
-  onShowAll() {
+  onShowBookings() {
     //component and route is not yet created
-    this.router.navigate(['bookings']);
+    this.router.navigate(['getBookings']);
+  }
+
+  onUpdate() {
+    this.router.navigate(['update']);
+  }
+
+  onDelete(){
+      this.router.navigate(['delete']);
   }
 }

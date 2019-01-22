@@ -1,0 +1,13 @@
+<h2>Update booking</h2>
+<table id="updatingTable">
+  <thead><tr><th scope=col>Booking-ID to update</th><th scope=col>Updated Date</th><th scope=col>Updated Text</th><th scope=col>Updated Amount</th></tr></thead>
+  <tbody>
+      <tr>
+          <td><input type="number" id="bookingID" [(ngModel)]="booking.id" name="bookingID" value="0"></td>
+          <td><input type="date" id="updatedDate" [(ngModel)]="booking.date" name="updatedDate" value="01.01.2019"></td>
+          <td><input type="text" id="updatedText" [(ngModel)]="booking.text" name="updatedText" value=""></td>
+          <td><input type="number" id="updatedAmount" [(ngModel)]="booking.amount" name="updatedAmount" value="0"></td>
+      </tr>
+  </tbody>
+</table>
+<button  class="btn btn-update" (click)="onUpdate()">Update</button>

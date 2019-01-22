@@ -3,6 +3,10 @@ import { Routes, RouterModule, CanActivate  } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { OverviewComponent } from './overview/overview.component';
+import { NewComponent} from './new/new.component';
+import { UpdateComponent} from './update/update.component';
+import { DeleteComponent} from './delete/delete.component';
+import { GetBookingsComponent} from './get-bookings/get-bookings.component';
 import { AuthGuardService } from './auth-guard.service';
 
 const routes: Routes = [
@@ -13,6 +17,30 @@ const routes: Routes = [
     component: OverviewComponent,
     canActivate: [AuthGuardService],
     data: { title: 'Overview' }
+  },
+  {
+    path: 'new',
+    component: NewComponent,
+    canActivate: [AuthGuardService],
+    data: { title: 'NewBooking' }
+  },
+  {
+    path: 'update',
+    component: UpdateComponent,
+    canActivate: [AuthGuardService],
+    data: { title: 'UpdateBooking' }
+  },
+  {
+    path: 'delete',
+    component: DeleteComponent,
+    canActivate: [AuthGuardService],
+    data: { title: 'DeleteBooking' }
+  },
+  {
+    path: 'getBookings',
+    component: GetBookingsComponent,
+    canActivate: [AuthGuardService],
+    data: { title: 'GetBookings' }
   },
   {
     path: '',

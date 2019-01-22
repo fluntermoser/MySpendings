@@ -8,13 +8,21 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { OverviewComponent } from './overview/overview.component';
 import { HttpClientModule } from '@angular/common/http';
+import { NewComponent } from './new/new.component';
+import { UpdateComponent } from './update/update.component';
+import { DeleteComponent } from './delete/delete.component';
+import { GetBookingsComponent } from './get-bookings/get-bookings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    OverviewComponent
+    OverviewComponent,
+    NewComponent,
+    UpdateComponent,
+    DeleteComponent,
+    GetBookingsComponent
   ],
   imports: [
     BrowserModule,
