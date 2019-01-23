@@ -1,0 +1,9 @@
+{
+    "database": {
+        "host": "localhost",
+        "database": "myspendings",
+        "user": "myspendings",
+        "password": "passwort1234"
+    },
+    "secret": "mySuperSecret"
+}

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../authentication.service';
 import { WebinterfaceService } from '../webinterface.service';
 import { Router } from '@angular/router';
 import { Booking } from '../booking';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-get-bookings',
@@ -11,16 +12,56 @@ import { Booking } from '../booking';
 })
 export class GetBookingsComponent implements OnInit {
 
-  constructor(private webService: WebinterfaceService) { }
+  constructor(private webService: WebinterfaceService, private router: Router,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.onShowAll();
   }
 
-booking: Booking[];
+  bindBookings(bookings: Booking[]) {
+    bookings.forEach(b => {
+      if(b.date) {
+        b.dateString = new Date(b.date).toLocaleDateString();
+      }
+    });
+    this.bookings = bookings;
+  }
 
-onShowAll(){
-  //this.booking.push(this.webService.getBookings("2019-01-01","2019-12-31",1));
+  bookings: Booking[];
 
-}
+  onShowAll() {
+    this.webService.getBookings().subscribe(bookings => {
+      console.log(bookings);
+      this.bindBookings(bookings);
+    });
+  }
+
+  onEdit(event) {
+    if(event.target.value) {
+      this.router.navigate(['update/' + event.target.value]);
+    }
+  }
+
+  onDelete(event) {
+    if(!event.target.value) {
+      return;
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {title: 'Delete?', content: 'Are you sure you want to delete this record?'}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.webService.delete(event.target.value).subscribe(() => {
+          this.onShowAll();
+        });
+      }
+    });
+  }
+
+  onBack() {
+    this.router.navigate(['overview']);
+  }
 
 }

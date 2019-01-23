@@ -2,15 +2,16 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var Database = require('./database.js');
-var secret = require('./secret.js');
+var config = require('./config.json');
 var Crypto = require('./crypto.js');
 
 var router = express.Router();
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, x-access-token, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
     next();
 });
 
@@ -23,7 +24,7 @@ router.post('/register', function (req, res) {
     console.log(req.body);
     database.createUser(name, passwordData)
         .then((message) => {
-            let token = jwt.sign({ id: name }, secret.secret, {
+            let token = jwt.sign({ id: name }, config.secret, {
                 expiresIn: 86400 // expires in 24 hours
             });
             console.log(message);
@@ -45,7 +46,7 @@ router.post('/login', function (req, res) {
                 res.status(400).send('wrong credentials');
                 return;
             }
-            let token = jwt.sign({ id: name }, secret.secret, {
+            let token = jwt.sign({ id: name }, config.secret, {
                 expiresIn: 86400 // expires in 24 hours
             });
             res.status(200).send({ auth: true, token: token });
@@ -65,7 +66,7 @@ router.post('/book', function (req, res) {
             let type = req.body.type;
             database.book(decoded.id, date, text, amount, type)
                 .then((result) => {
-                    res.status(200).send('Booking received');
+                    res.status(200).send(JSON.stringify('Booking received'));
                 })
                 .catch((err) => {
                     console.log("error " + err);
@@ -79,7 +80,7 @@ router.post('/book', function (req, res) {
         })
 });
 
-router.post('/get', function (req, res) {
+router.post('/getBookings', function (req, res) {
     verifyToken(req)
         .then(decoded => {
             let datefrom = req.body.datefrom;
@@ -101,7 +102,29 @@ router.post('/get', function (req, res) {
         })
 });
 
-router.post('/balance', function (req, res) {
+router.get('/get/:id', function (req, res) {
+    verifyToken(req)
+        .then(decoded => {
+            let id = req.params.id;
+            if(id) {
+                database.getBooking(id)
+                .then((result) => {
+                    res.status(200).send(result);
+                })
+                .catch((err) => {
+                    console.log("error " + err);
+                    res.status(500).send('Unable to get booking');
+                });
+            }
+        })
+        .catch(reason => {
+            console.log(reason);
+            res.status(401).send({ auth: false, message: reason });
+            return;
+        })
+});
+
+router.get('/balance', function (req, res) {
     verifyToken(req)
         .then(decoded => {
             database.getBalance(decoded.id)
@@ -120,7 +143,7 @@ router.post('/balance', function (req, res) {
         })
 });
 
-router.post('/update', function (req, res) {
+router.put('/update', function (req, res) {
     verifyToken(req)
         .then(decoded => {
             let id = req.body.id;
@@ -130,7 +153,7 @@ router.post('/update', function (req, res) {
             let type = req.body.type;
             database.updateBooking(decoded.id, id, date, text, amount, type)
                 .then((result) => {
-                    res.status(200).send('Booking updated.');
+                    res.status(200).send(JSON.stringify('Booking updated.'));
                 })
                 .catch((err) => {
                     console.log("error " + err);
@@ -144,13 +167,13 @@ router.post('/update', function (req, res) {
         })
 });
 
-router.post('/delete', function (req, res) {
+router.delete('/delete/:id', function (req, res) {
     verifyToken(req)
         .then(decoded => {
-            let id = req.body.id;
+            let id = req.params.id;
             database.deleteBooking(decoded.id, id)
                 .then((result) => {
-                    res.status(200).send('Booking deleted.');
+                    res.status(200).send(JSON.stringify('Booking deleted.'));
                 })
                 .catch((err) => {
                     console.log("error " + err);
@@ -172,7 +195,7 @@ function verifyToken(req) {
             reject('Not authenticated');
             return;
         }
-        jwt.verify(token, secret.secret, function (err, decoded) {
+        jwt.verify(token, config.secret, function (err, decoded) {
             if (err) {
                 console.error(err);
                 reject('Not authenticated');

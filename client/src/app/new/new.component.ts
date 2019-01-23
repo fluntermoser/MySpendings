@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../authentication.service';
 import { WebinterfaceService } from '../webinterface.service';
 import { Router } from '@angular/router';
-import { text } from '@angular/core/src/render3';
 import { Booking } from '../booking';
+import { SuccessDialogComponent } from '../success-dialog/success-dialog.component';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-new',
@@ -13,26 +13,35 @@ import { Booking } from '../booking';
 export class NewComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, private router: Router,
-    private authService: AuthenticationService) { }
- 
+    private snackBar: MatSnackBar) {
+
+  }
+
 
   ngOnInit() {
-  
+
   }
 
- booking = new Booking(0,'','',0,0);
+  model = new Booking(0,null, '', 1, 0);
 
-  async onBooking(){
-    if(this.booking.amount>0){
-      this.booking.type = 1;
-    } else {
-      this.booking.type = 0;
-    }
-   await this.webService.book(this.booking.date,this.booking.text,this.booking.amount,this.booking.type);
-  
-   this.booking.date="01.01.2019";
-   this.booking.text="";
-   this.booking.amount=0;
+  onBook() {
+    this.webService.book(this.model)
+      .subscribe(() => {
+        this.model = new Booking(0, null, '', 1, 0);
+        this.successDialog();
+      });
   }
 
+  successDialog() {
+    this.snackBar.openFromComponent(SuccessDialogComponent, {
+      duration: 2000,
+      data: {
+          text: 'Data booked successfully!'
+      }
+    });
+  }
+
+  onBack() {
+    this.router.navigate(['overview']);
+  }
 }

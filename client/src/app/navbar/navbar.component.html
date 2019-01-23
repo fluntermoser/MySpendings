@@ -1,0 +1,26 @@
+<nav class="navbar fixed-top navbar-dark bg-dark navbar-expand-lg">
+    <a class="navbar-brand" href="#">MySpendings</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+            <button class="btn btn-outline-success" type="button"
+            (click)="onHome()">Home</button>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-outline-success" type="button"
+            (click)="onBookings()">Bookings</button>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-outline-success" type="button"
+        (click)="onNew()">Add New</button>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-outline-success" type="button"
+            (click)="onSignOut()">Sign Out</button>
+        </li>
+      </ul>
+    </div>
+  </nav>

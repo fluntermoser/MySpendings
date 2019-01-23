@@ -5,7 +5,6 @@ import { RegisterComponent } from './register/register.component';
 import { OverviewComponent } from './overview/overview.component';
 import { NewComponent} from './new/new.component';
 import { UpdateComponent} from './update/update.component';
-import { DeleteComponent} from './delete/delete.component';
 import { GetBookingsComponent} from './get-bookings/get-bookings.component';
 import { AuthGuardService } from './auth-guard.service';
 
@@ -25,22 +24,16 @@ const routes: Routes = [
     data: { title: 'NewBooking' }
   },
   {
-    path: 'update',
+    path: 'update/:id',
     component: UpdateComponent,
     canActivate: [AuthGuardService],
     data: { title: 'UpdateBooking' }
   },
   {
-    path: 'delete',
-    component: DeleteComponent,
-    canActivate: [AuthGuardService],
-    data: { title: 'DeleteBooking' }
-  },
-  {
-    path: 'getBookings',
+    path: 'bookings',
     component: GetBookingsComponent,
     canActivate: [AuthGuardService],
-    data: { title: 'GetBookings' }
+    data: { title: 'Bookings' }
   },
   {
     path: '',

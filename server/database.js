@@ -1,32 +1,34 @@
 const mysql = require('mysql');
 const fs = require('fs');
+var config = require("./config.json");
 var con;
 class Database {
     constructor() {
         let p = this.connectDatabase();
         p.then(message => {
             console.log(message);
-            con.query('USE myspendings;', function (err) {
+            con.query(`USE ${config.database.database};`, function (err) {
                 if (err) {
                     console.error(err);
                 }
             });
             //this.initDefaultSchema();
         }).catch(reason => {
-            console.err(reason);
+            console.error(reason);
         });
     }
 
     connectDatabase() {
         con = mysql.createConnection({
-            host: "localhost",
-            user: "myspendings",
-            password: "passwort1234"
+            host: config.database.host,
+            user: config.database.user,
+            password: config.database.password
         });
         let p = new Promise((resolve, reject) => {
             con.connect(function (err) {
                 if (err) {
-                    reject("connection to db failed");
+                    console.log(config);
+                    reject(err);
                     return;
                 }
                 resolve("connection to db successfull");
@@ -160,10 +162,30 @@ class Database {
         });
     }
 
+    getBooking(id) {
+        return new Promise((resolve, reject) => {
+            con.query(`SELECT id, date, text, amount, type
+             FROM spendings WHERE id=? 
+             LIMIT 1`, [id], (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        reject('error getting bookings for user');
+                        return;
+                    }
+                    if (results[0]) {
+                        resolve(results[0]);
+                        return;
+                    }
+                    reject('error getting bookings for user');
+                });
+        });
+    }
+
     getAllBookings(user) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
-             FROM spendings WHERE user=?`, [user], (err, results) => {
+             FROM spendings WHERE user=? 
+             ORDER BY date`, [user], (err, results) => {
                     if (err) {
                         console.error(err);
                         reject('error getting bookings for user');

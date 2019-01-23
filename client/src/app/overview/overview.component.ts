@@ -24,11 +24,6 @@ export class OverviewComponent implements OnInit {
 
   balance = new Balance(0);
 
-  onLogout() {
-    this.authService.revoke();
-    this.router.navigate(['login']);
-  }
-
   onAddNew() {
     //component and route is not yet created
     this.router.navigate(['new']);
@@ -36,14 +31,6 @@ export class OverviewComponent implements OnInit {
 
   onShowBookings() {
     //component and route is not yet created
-    this.router.navigate(['getBookings']);
-  }
-
-  onUpdate() {
-    this.router.navigate(['update']);
-  }
-
-  onDelete(){
-      this.router.navigate(['delete']);
+    this.router.navigate(['bookings']);
   }
 }

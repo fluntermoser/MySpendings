@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { WebinterfaceService } from '../webinterface.service';
 import { Booking } from '../booking';
+import { MatSnackBar } from '@angular/material';
+import { SuccessDialogComponent } from '../success-dialog/success-dialog.component';
+import { Router, ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-update',
@@ -9,26 +13,43 @@ import { Booking } from '../booking';
 })
 export class UpdateComponent implements OnInit {
 
-  constructor(private webService: WebinterfaceService) { }
+  constructor(private webService: WebinterfaceService, 
+              private router: Router,
+              private datePipe: DatePipe,
+              private route: ActivatedRoute,
+              private snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      if(params['id']) {
+        this.webService.getBooking(params['id']).subscribe((booking) => {
+          this.model = booking;
+          this.model.date =  this.datePipe.transform(new Date(this.model.date), 'yyyy-MM-dd');
+        });
+      }
+    });
   }
 
-  booking = new Booking(0,'','',0,0);
+  model = new Booking(0, null, '', 1, 0);
 
-  async onUpdate() {
-    if(this.booking.amount>0){
-      this.booking.type = 1;
-    } else {
-      this.booking.type = 0;
-    }
+  onUpdate() {
+    this.webService.update(this.model)
+    .subscribe(() => {
+      this.successDialog();
+    });
+  }
 
-    await this.webService.update(this.booking.id,this.booking.date,this.booking.text,this.booking.amount,this.booking.type);
-  
-    this.booking.id=0;
-    this.booking.date="01.01.2019";
-    this.booking.text="";
-    this.booking.amount=0;
+  onBack() {
+    this.router.navigate(['bookings']);
+  }
+
+  successDialog() {
+    this.snackBar.openFromComponent(SuccessDialogComponent, {
+      duration: 2000,
+      data: {
+          text: 'Record successfully updated!'
+      }
+    });
   }
 
 }

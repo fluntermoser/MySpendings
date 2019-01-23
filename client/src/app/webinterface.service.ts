@@ -20,11 +20,11 @@ export class WebinterfaceService {
     private http: HttpClient, private router: Router) { }
 
 
-  
+
   getHttpOptions() {
     let headers = new HttpHeaders().set('Content-Type', 'application/json')
-                                    .set('x-access-token', this.authService.getToken());
-    return {headers: headers};
+      .set('x-access-token', this.authService.getToken());
+    return { headers: headers };
   }
 
   login(username: string, password: string) {
@@ -49,48 +49,38 @@ export class WebinterfaceService {
       });
   }
 
- book(date: string, text: string, amount: number, type: number) {
-    return this.http.post<Token>(this.api + '/book', { date, text, amount, type }, this.getHttpOptions())
-      .pipe(catchError(this.handleError.bind(this))
-      ).subscribe(token => {
-        if (token.auth) {
-          this.authService.authenticate(token);
-          this.router.navigate(['new']);
-        }
-      });
-  }
-
-  update(id: number, date: string, text: string, amount: number, type: number) {
-    return this.http.post<Token>(this.api + '/update', { id, date, text, amount, type }, this.getHttpOptions())
-      .pipe(catchError(this.handleError.bind(this))
-      ).subscribe(token => {
-        if (token.auth) {
-          this.authService.authenticate(token);
-          this.router.navigate(['update']);
-        }
-      });
-  }
-
-  delete(id: number) {
-    return this.http.post<Token>(this.api + '/update', { id }, this.getHttpOptions())
-      .pipe(catchError(this.handleError.bind(this))
-      ).subscribe(token => {
-        if (token.auth) {
-          this.authService.authenticate(token);
-          this.router.navigate(['delete']);
-        }
-      });
-  }
-
-  getBookings(dateFrom: string, dateTo: string, type: number): Observable<Booking> {
-    return this.http.post<Booking>(this.api + '/get', { dateFrom, dateTo, type }, this.getHttpOptions())
+  book(booking: Booking) {
+    return this.http.post<Token>(this.api + '/book', booking, this.getHttpOptions())
       .pipe(catchError(this.handleError.bind(this))
       );
   }
-  
+
+  update(booking: Booking) {
+    return this.http.put<Token>(this.api + '/update', booking, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      );
+  }
+
+  delete(id: number) {
+    return this.http.delete<Token>(this.api + '/delete/' + id, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      );
+  }
+
+  getBooking(id: number): Observable<Booking> {
+    return this.http.get<Booking>(this.api + '/get/' + id, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      );
+  }
+
+  getBookings(): Observable<Booking[]> {
+    return this.http.post<Booking[]>(this.api + '/getBookings', {}, this.getHttpOptions())
+      .pipe(catchError(this.handleError.bind(this))
+      );
+  }
 
   getBalance(): Observable<Balance> {
-    return this.http.post<Balance>(this.api + '/balance',{}, this.getHttpOptions())
+    return this.http.get<Balance>(this.api + '/balance', this.getHttpOptions())
       .pipe(catchError(this.handleError.bind(this))
       );
   }
@@ -102,8 +92,8 @@ export class WebinterfaceService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
-      if(error.error.message) {
-        if(error.error.auth === false) {
+      if (error.error.message) {
+        if (error.error.auth === false) {
           this.authService.revoke();
           this.router.navigate(['login']);
         }
@@ -111,7 +101,7 @@ export class WebinterfaceService {
       } else {
         alert(error.error);
       }
-      
+
       console.error(
         `Backend returned code ${error.status}, ` +
         `body was: ${error.error}`);

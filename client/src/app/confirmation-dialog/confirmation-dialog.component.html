@@ -1,0 +1,12 @@
+<div class="card">
+  <div class="card-body">
+    <h1 class="card-title">{{data.title}}</h1>
+    <div>
+      <p>{{data.content}}</p>
+    </div>
+    <div mat-dialog-actions class="mx-auto">
+      <button class="btn btn-success" mat-button [mat-dialog-close]="true">Yes</button>
+      <button class="btn btn-success" mat-button (click)="onNoClick()" cdkFocusInitial>No</button>
+    </div>
+  </div>
+</div>

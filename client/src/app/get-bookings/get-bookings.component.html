@@ -1,11 +1,27 @@
-<h2>Show bookings</h2>
-<p>{{booking.date}}</p>
-<div class="container">
-    <ul class="bookings">
-      <li *ngFor="let booking of bookings">
-        <span class="badge">{{booking.date}}</span>
-      </li>
-    </ul>
-  </div>
-<button  class="btn btn-getbooking" (click)="onShowAll()">Show all bookings</button>
-<button  class="btn btn-getbooking" (click)="onSelectBookings()">Select bookings</button>
+<h2>Bookings</h2>
+<button class="btn btn-success" (click)="onShowAll()">Show all bookings</button>
+<!-- <button class="btn btn-success" (click)="onSelectBookings()">Select bookings</button> -->
+<button class="btn btn-success" (click)="onBack()">Back ...</button>
+<table class="table" style="margin-top:20px">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Type</th>
+      <th scope="col">Amount</th>
+      <th scope="col" class="hide-small">Text</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let booking of bookings">
+      <th scope="row">{{booking.dateString}}</th>
+      <td>{{booking.type == 0 ? 'Spending' : 'Income'}}</td>
+      <td [ngClass]="{'red': booking.type == 0, 'green': booking.type == 1}">{{booking.amount}}</td>
+      <td class="hide-small">{{booking.text}}</td>
+      <td><button value="{{booking.id}}" id="buttonEdit" (click)="onEdit($event)" class="fa fa-pencil blue action"
+          aria-hidden="true"></button>&nbsp;
+        <button value="{{booking.id}}" id="buttonDelete" (click)="onDelete($event)" class="fa fa-trash red action"
+          aria-hidden="true"></button></td>
+    </tr>
+  </tbody>
+</table>

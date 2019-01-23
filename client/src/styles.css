@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css');
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 .card {
     max-width: 500px;
@@ -8,7 +9,31 @@
     margin-top: 40px;
 }
 
+.container {
+    margin-top: 100px;
+}
+
 .btn {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.mat-snack-bar-container {
+    margin-left: auto!important;
+    margin-right: auto!important;
+    text-align: center;
+}
+
+.mat-snack-bar-container span{
+    background-color: darkslategrey;
+    color: white;
+    margin-top: 0px;
+    box-shadow: 0 2px 2px rgba(0,0,0,.24), 0 0 2px rgba(0,0,0,.12);
+    opacity: 0.9;
+}
+
+.mat-dialog-container {
+    position: fixed;
+    top: 0;
+    background-color: #8080808c;
 }
