@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { WebinterfaceService } from '../webinterface.service';
 import { Router } from '@angular/router';
 import { User } from '../user';
+import { MatSnackBar } from '@angular/material';
+import { SuccessDialogComponent } from '../success-dialog/success-dialog.component';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +12,8 @@ import { User } from '../user';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private webService: WebinterfaceService, private router: Router) { }
+  constructor(private webService: WebinterfaceService, private router: Router,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
   }
@@ -18,10 +21,19 @@ export class RegisterComponent implements OnInit {
 
   onRegister() {
     if(this.model.password !== this.model.password2) {
-      alert('Passwords do not match');
+      this.errorDialog();
       return;
     }
     this.webService.register(this.model.username, this.model.password);
+  }
+
+  errorDialog() {
+    this.snackBar.openFromComponent(SuccessDialogComponent, {
+      duration: 2000,
+      data: {
+          text: 'Passwords do not match!'
+      }
+    });
   }
 
   onBack() {

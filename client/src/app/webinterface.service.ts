@@ -28,14 +28,7 @@ export class WebinterfaceService {
   }
 
   login(username: string, password: string) {
-    return this.http.post<Token>(this.api + '/login', { username, password }, this.getHttpOptions())
-      .pipe(catchError(this.handleError)
-      ).subscribe(token => {
-        if (token.auth) {
-          this.authService.authenticate(token);
-          this.router.navigate(['overview']);
-        }
-      });
+    return this.http.post<Token>(this.api + '/login', { username, password }, this.getHttpOptions());
   }
 
   register(username: string, password: string) {
