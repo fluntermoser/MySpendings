@@ -2,7 +2,17 @@ const mysql = require('mysql');
 const fs = require('fs');
 var config = require("./config.json");
 var con;
+
+/**
+ * class that manages all database operations
+ * @class
+ */
 class Database {
+    /**
+     * class that manages all database operations.
+     * the constructur initially creates a databse connection. 
+     * the connection opened is used for all other operations
+     */
     constructor() {
         let p = this.connectDatabase();
         p.then(message => {
@@ -17,14 +27,17 @@ class Database {
             console.error(reason);
         });
     }
-
+    /**
+     * opens a connection to the database using the credentials provided in config file
+     * @function
+    */
     connectDatabase() {
         con = mysql.createConnection({
             host: config.database.host,
             user: config.database.user,
             password: config.database.password
         });
-        let p = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             con.connect(function (err) {
                 if (err) {
                     console.log(config);
@@ -34,9 +47,12 @@ class Database {
                 resolve("connection to db successfull");
             });
         });
-        return p;
     }
 
+    /**
+     * creates the default database scheme that is needed for the app to run properly
+     * @function
+     */
     initDefaultSchema() {
         fs.readFile('defaultschema.sql', 'utf8', function (err3, data) {
             if (err3) throw err3;
@@ -60,6 +76,12 @@ class Database {
         });
     }
 
+    /**
+     * creates user in database given the username and passwordData object
+     * @function
+     * @param {string} username 
+     * @param {object} passwordData - object containing 'passwordHash' and 'salt'
+     */
     createUser(username, passwordData) {
         return new Promise((resolve, reject) => {
             con.query('INSERT INTO user (username, password, salt) VALUES (?, ?, ?)', [username, passwordData.passwordHash, passwordData.salt], (err, results) => {
@@ -73,6 +95,11 @@ class Database {
         });
     }
 
+    /**
+     * checks if user is existing in database
+     * @function
+     * @param {string} username 
+     */
     checkUser(username) {
         return new Promise((resolve, reject) => {
             con.query('SELECT password, salt FROM user WHERE username=? LIMIT 1', [username], (err, results) => {
@@ -90,6 +117,15 @@ class Database {
         });
     }
 
+    /**
+     * creates a new booking in the database using the given parameters
+     * @function
+     * @param {string} user 
+     * @param {string} date 
+     * @param {string} text 
+     * @param {number} amount 
+     * @param {number} type 
+     */
     book(user, date, text, amount, type) {
         return new Promise((resolve, reject) => {
             con.query(`INSERT INTO spendings 
@@ -106,6 +142,12 @@ class Database {
         });
     }
 
+    /**
+     * deletes booking with given id and given user from database
+     * @function
+     * @param {string} user 
+     * @param {number} id 
+     */
     deleteBooking(user, id) {
         return new Promise((resolve, reject) => {
             con.query(`DELETE FROM spendings WHERE user=? and id=?`, [user, id], (err, results) => {
@@ -123,6 +165,17 @@ class Database {
         });
     }
 
+    /**
+     * updates booking with given id for given user
+     * with the given values 
+     * @function
+     * @param {string} user 
+     * @param {number} id 
+     * @param {string} date 
+     * @param {string} text 
+     * @param {number} amount 
+     * @param {number} type 
+     */
     updateBooking(user, id, date, text, amount, type) {
         return new Promise((resolve, reject) => {
             con.query(`UPDATE spendings 
@@ -140,6 +193,11 @@ class Database {
         });
     }
 
+    /**
+     * gets the users balance from database
+     * @function
+     * @param {string} user 
+     */
     getBalance(user) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT SUM(sum) as balance from 
@@ -162,6 +220,11 @@ class Database {
         });
     }
 
+    /**
+     * gets a single booking by id
+     * @function
+     * @param {number} id 
+     */
     getBooking(id) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
@@ -181,6 +244,11 @@ class Database {
         });
     }
 
+    /**
+     * gets all bookings for given user
+     * @function
+     * @param {string} user 
+     */
     getAllBookings(user) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
@@ -199,6 +267,13 @@ class Database {
                 });
         });
     }
+
+    /**
+     * gets all bookings for given user and type
+     * @function
+     * @param {string} user 
+     * @param {number} type 
+     */
     getBookingsForType(user, type) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
@@ -217,6 +292,14 @@ class Database {
                 });
         });
     }
+
+    /**
+     * gets all bookings for given user and date
+     * @function
+     * @param {string} user 
+     * @param {string} dateFrom 
+     * @param {string} dateTo 
+     */
     getBookingsForDate(user, dateFrom, dateTo) {
         return new Promise((resolve, reject) => {
             let dateStatement = this.getDateCheck(dateFrom, dateTo);
@@ -238,6 +321,14 @@ class Database {
         });
     }
 
+    /**
+     * gets all bookings for given user, type and date
+     * @function
+     * @param {string} user 
+     * @param {string} dateFrom 
+     * @param {string} dateTo 
+     * @param {number} type 
+     */
     getBookingsForDateAndType(user, dateFrom, dateTo, type) {
         return new Promise((resolve, reject) => {
             let dateStatement = this.getDateCheck(dateFrom, dateTo);
@@ -258,6 +349,16 @@ class Database {
                 });
         });
     }
+
+    /**
+     * gets bookings for user that match given parameters
+     * only user parameter has bo be set
+     * @function
+     * @param {string} user 
+     * @param {string} dateFrom 
+     * @param {string} dateTo 
+     * @param {number} type 
+     */
     getBookings(user, dateFrom, dateTo, type) {
         if (dateFrom || dateTo) {
             if (type) {
@@ -271,6 +372,12 @@ class Database {
         return this.getAllBookings(user);
     }
 
+    /**
+     * generates an escaped sql subqery check for given dates
+     * only one date has to be set
+     * @param {string} dateFrom 
+     * @param {string} dateTo 
+     */
     getDateCheck(dateFrom, dateTo) {
         let dateStatement = '';
         if (dateFrom && dateTo) {

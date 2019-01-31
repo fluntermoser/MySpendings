@@ -1,3 +1,7 @@
+/**
+ * Module that manages all routes that are available 
+ */
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
@@ -18,6 +22,12 @@ router.use(function (req, res, next) {
 var database = new Database();
 var crypto = new Crypto();
 
+/**
+ * register route manages new users and returns a jwt if login was successfull
+ * @method POST
+ * @param username - request body param
+ * @param password - request body param
+ */
 router.post('/register', function (req, res) {
     let name = req.body.username;
     let passwordData = crypto.hashPasswordNew(req.body.password);
@@ -36,6 +46,12 @@ router.post('/register', function (req, res) {
         });
 });
 
+/**
+ * login route manages new logins and returns a jwt if login was successfull
+ * @method POST
+ * @param username - request body param
+ * @param password - request body param
+ */
 router.post('/login', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
@@ -43,7 +59,7 @@ router.post('/login', function (req, res) {
     database.checkUser(name)
         .then((userObj) => {
             if (!crypto.compare(password, userObj.salt, userObj.password)) {
-                res.status(400).send('wrong credentials');
+                res.status(400).send('Wrong credentials');
                 return;
             }
             let token = jwt.sign({ id: name }, config.secret, {
@@ -57,6 +73,14 @@ router.post('/login', function (req, res) {
         });
 });
 
+/**
+ * book route manages new bookings
+ * @method POST
+ * @param data -request body param
+ * @param text -request body param
+ * @param amount -request body param
+ * @param type -request body param
+ */
 router.post('/book', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -80,6 +104,13 @@ router.post('/book', function (req, res) {
         })
 });
 
+/**
+ * getBookings rout loads all bookings for a user
+ * @method POST
+ * @param from -request body param
+ * @param to -request body param
+ * @param type -request body param
+ */
 router.post('/getBookings', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -102,6 +133,11 @@ router.post('/getBookings', function (req, res) {
         })
 });
 
+/**
+ * get route gets a single booking by its id
+ * @method GET
+ * @param id - url parameter
+ */
 router.get('/get/:id', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -124,6 +160,10 @@ router.get('/get/:id', function (req, res) {
         })
 });
 
+/**
+ * balance route gets the balance for a user
+ * @method GET
+ */
 router.get('/balance', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -143,6 +183,15 @@ router.get('/balance', function (req, res) {
         })
 });
 
+/**
+ * update route updates a booking with the given values
+ * @method PUT
+ * @param id -request body param
+ * @param data -request body param
+ * @param text -request body param
+ * @param amount -request body param
+ * @param type -request body param
+ */
 router.put('/update', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -167,6 +216,11 @@ router.put('/update', function (req, res) {
         })
 });
 
+/**
+ * delete route deletes a booking by its id
+ * @method DELETE
+ * @param id - url parameter
+ */
 router.delete('/delete/:id', function (req, res) {
     verifyToken(req)
         .then(decoded => {
@@ -187,6 +241,11 @@ router.delete('/delete/:id', function (req, res) {
         })
 });
 
+/**
+ * verifies that the request that was sent has a valid token from an authenticated user
+ * @function
+ * @param {object} req -request object from request
+ */
 function verifyToken(req) {
     var token = req.headers['x-access-token'];
     return new Promise((resolve, reject) => {
