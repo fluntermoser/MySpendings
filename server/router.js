@@ -83,8 +83,8 @@ router.post('/book', function (req, res) {
 router.post('/getBookings', function (req, res) {
     verifyToken(req)
         .then(decoded => {
-            let datefrom = req.body.datefrom;
-            let dateto = req.body.datefrom;
+            let datefrom = req.body.from;
+            let dateto = req.body.to;
             let type = req.body.type;
             database.getBookings(decoded.id, datefrom, dateto, type)
                 .then((result) => {

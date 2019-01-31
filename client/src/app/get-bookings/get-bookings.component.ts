@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Booking } from '../booking';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { BookingFilter } from '../booking-filter';
 
 @Component({
   selector: 'app-get-bookings',
@@ -13,48 +14,52 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 export class GetBookingsComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, private router: Router,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog) {
+      this.filter = new BookingFilter(null, null, null);
+    }
+
+
+  bookings: Booking[];
+  filter: BookingFilter;
 
   ngOnInit() {
-    this.onShowAll();
+    this.loadBookings();
   }
 
   bindBookings(bookings: Booking[]) {
     bookings.forEach(b => {
-      if(b.date) {
+      if (b.date) {
         b.dateString = new Date(b.date).toLocaleDateString();
       }
     });
     this.bookings = bookings;
   }
 
-  bookings: Booking[];
-
-  onShowAll() {
-    this.webService.getBookings().subscribe(bookings => {
+  loadBookings() {
+    this.webService.getBookings(this.filter).subscribe(bookings => {
       console.log(bookings);
       this.bindBookings(bookings);
     });
   }
 
   onEdit(event) {
-    if(event.target.value) {
+    if (event.target.value) {
       this.router.navigate(['update/' + event.target.value]);
     }
   }
 
   onDelete(event) {
-    if(!event.target.value) {
+    if (!event.target.value) {
       return;
     }
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {title: 'Delete?', content: 'Are you sure you want to delete this record?'}
+      data: { title: 'Delete?', content: 'Are you sure you want to delete this record?' }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result) {
+      if (result) {
         this.webService.delete(event.target.value).subscribe(() => {
-          this.onShowAll();
+          this.loadBookings();
         });
       }
     });
@@ -64,4 +69,13 @@ export class GetBookingsComponent implements OnInit {
     this.router.navigate(['overview']);
   }
 
+  onFilter() {
+    this.loadBookings();
+    console.log(this.filter);
+  }
+
+  onClearFilter() {
+    this.filter = new BookingFilter(null, null, null);
+    this.loadBookings();
+  }
 }

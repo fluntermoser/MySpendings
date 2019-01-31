@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { User } from './user';
 import { Token } from './token';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Balance } from './balance';
 import { Booking } from './booking';
+import { BookingFilter } from './booking-filter';
 
 @Injectable({
   providedIn: 'root'
@@ -66,8 +66,8 @@ export class WebinterfaceService {
       );
   }
 
-  getBookings(): Observable<Booking[]> {
-    return this.http.post<Booking[]>(this.api + '/getBookings', {}, this.getHttpOptions())
+  getBookings(filter: BookingFilter): Observable<Booking[]> {
+    return this.http.post<Booking[]>(this.api + '/getBookings', filter, this.getHttpOptions())
       .pipe(catchError(this.handleError.bind(this))
       );
   }

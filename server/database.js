@@ -202,7 +202,8 @@ class Database {
     getBookingsForType(user, type) {
         return new Promise((resolve, reject) => {
             con.query(`SELECT id, date, text, amount, type
-             FROM spendings WHERE user=? AND type=?`, [user, type], (err, results) => {
+             FROM spendings WHERE user=? AND type=?
+             ORDER BY date`, [user, type], (err, results) => {
                     if (err) {
                         console.error(err);
                         reject('error getting bookings user');
@@ -218,9 +219,11 @@ class Database {
     }
     getBookingsForDate(user, dateFrom, dateTo) {
         return new Promise((resolve, reject) => {
+            let dateStatement = this.getDateCheck(dateFrom, dateTo);
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=? AND 
-             (date BETWEEN ? AND ?)`, [user, dateFrom, dateTo], (err, results) => {
+             ${dateStatement} 
+             ORDER BY date`, [user], (err, results) => {
                     if (err) {
                         console.error(err);
                         reject('error getting bookings user');
@@ -234,11 +237,14 @@ class Database {
                 });
         });
     }
+
     getBookingsForDateAndType(user, dateFrom, dateTo, type) {
         return new Promise((resolve, reject) => {
+            let dateStatement = this.getDateCheck(dateFrom, dateTo);
             con.query(`SELECT id, date, text, amount, type
              FROM spendings WHERE user=? AND 
-             (date BETWEEN ? AND ?) AND type=?`, [user, dateFrom, dateTo, type], (err, results) => {
+             ${dateStatement} AND type=?
+             ORDER BY date`, [user, type], (err, results) => {
                     if (err) {
                         console.error(err);
                         reject('error getting bookings user');
@@ -253,7 +259,7 @@ class Database {
         });
     }
     getBookings(user, dateFrom, dateTo, type) {
-        if (dateFrom && dateTo) {
+        if (dateFrom || dateTo) {
             if (type) {
                 return this.getBookingsForDateAndType(user, dateFrom, dateTo, type);
             }
@@ -263,6 +269,20 @@ class Database {
             return this.getBookingsForType(user, type);
         }
         return this.getAllBookings(user);
+    }
+
+    getDateCheck(dateFrom, dateTo) {
+        let dateStatement = '';
+        if (dateFrom && dateTo) {
+            dateStatement = `(date BETWEEN ${con.escape(dateFrom)} AND ${con.escape(dateTo)})`;
+        }
+        else if (dateFrom) {
+            dateStatement = `date >= ${con.escape(dateFrom)}`;
+        }
+        else if (dateTo) {
+            dateStatement = `date <= ${con.escape(dateTo)}`;
+        }
+        return dateStatement;
     }
 }
 

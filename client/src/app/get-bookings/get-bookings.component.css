@@ -15,8 +15,20 @@
     border: unset;
 }
 
+.align-bottom {
+    position: absolute;
+    bottom: 0;
+}
+
 @media only screen and (max-width: 530px) {
     .hide-small {
       display: none;
+    }
+  }
+
+  @media only screen and (max-width: 633px) {
+    .align-bottom {
+        position: relative;
+        margin-top: 20px;
     }
   }

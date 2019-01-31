@@ -1,7 +1,35 @@
 <h2>Bookings</h2>
-<button class="btn btn-success" (click)="onShowAll()">Show all bookings</button>
-<!-- <button class="btn btn-success" (click)="onSelectBookings()">Select bookings</button> -->
-<button class="btn btn-success" (click)="onBack()">Back ...</button>
+<div style="margin-bottom:20px;margin-top:20px;">
+  <!-- <button class="btn btn-success" (click)="onSelectBookings()">Select bookings</button> -->
+  <button class="btn btn-success" (click)="onBack()">Back ...</button>
+</div>
+
+<div id="filterDiv" class="row">
+  <div class="row col-sm-9">
+    <div class="col-sm-4">
+      <label for="type" class="col-form-label">Type</label>
+      <select id="type" required class="form-control" name="type" [(ngModel)]="filter.type">
+        <option value=1>Income</option>
+        <option value=0>Spending</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label for="from" class="col-form-label">From</label>
+      <input type="date" class="form-control" name="from" [(ngModel)]="filter.from">
+    </div>
+    <div class="col-sm-4">
+      <label for="to" class="col-form-label">To</label>
+      <input type="date" class="form-control" name="from" [(ngModel)]="filter.to">
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="align-bottom">
+      <button type="submit" class="btn btn-success" (click)="onFilter()">Filter</button>
+      <button type="submit" class="btn btn-success" (click)="onClearFilter()">Clear Filter</button>
+    </div>
+
+  </div>
+</div>
 <table class="table" style="margin-top:20px">
   <thead>
     <tr>
