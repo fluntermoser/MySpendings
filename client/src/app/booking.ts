@@ -1,3 +1,7 @@
+/**
+ * object representing a single booking (spending/income)
+ * @class
+ */
 export class Booking {
   dateString: string;
     constructor(

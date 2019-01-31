@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../authentication.service';
 import { WebinterfaceService } from '../webinterface.service';
-import { Balance } from '../balance';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,26 +9,23 @@ import { Router } from '@angular/router';
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private webService: WebinterfaceService, private router: Router,
-    private authService: AuthenticationService) { }
+  constructor(private webService: WebinterfaceService, private router: Router) { }
 
   ngOnInit() {
     this.webService.getBalance().subscribe(bal => {
       if(bal.balance) {
-        this.balance.balance = bal.balance;
+        this.balance = bal.balance;
       }
     });
   }
 
-  balance = new Balance(0);
+  balance: number = 0;
 
   onAddNew() {
-    //component and route is not yet created
     this.router.navigate(['new']);
   }
 
   onShowBookings() {
-    //component and route is not yet created
     this.router.navigate(['bookings']);
   }
 }

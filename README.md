@@ -1,15 +1,18 @@
 # MySpendings
 The whole project is split in to seperate applications 
-because we want to be able to do the same things for mutliple clients
+because we want to be able to use the same server and database for multiple clients
 (e.g. WebApplication and Android App use the same server to comunicate with)
 
-#Setup
-- start MySql Server
+# Requirements
+For this application to run you must have mysql and node.js installed on your machine
+
+# Setup
+- start MySql Server (install if you haven't already)
 - create Databse using the SQL Code from /server/defaultschema.sql
-- create SQL User for the newly created database and enter credentials in /server/config.json file
+- create SQL User with permissions for the newly created database and enter credentials in /server/config.json file
 - enter a secret Key in /server/config.json file
-- enter server location in /client/config.json (for now the default value should work)
 - open command prompt go to /client/ folder and run "npm install"
 - open command prompt go to /server/ folder and run "npm install"
 - start server using "node /server/app.js"
 - start client using "ng serve --open"
+(starting server and client on one machine requires using two terminals)
