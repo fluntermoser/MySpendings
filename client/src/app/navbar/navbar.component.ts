@@ -12,6 +12,10 @@ export class NavbarComponent implements OnInit {
   constructor(private router: Router, private authService: AuthenticationService) { }
 
   ngOnInit() {
+    $('nav button.nav-bar-button').on('click', function () {
+      if($(window).width() < 1092)
+        $('.navbar-toggler').click();
+    });
   }
 
   onSignOut() {
