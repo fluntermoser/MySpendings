@@ -10,6 +10,11 @@ import { SuccessDialogComponent } from '../success-dialog/success-dialog.compone
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
+/**
+ * component that provides a gui for the registration process of user
+ * calls webinterfaceService
+ * @class
+ */
 export class RegisterComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, private router: Router,
@@ -19,6 +24,10 @@ export class RegisterComponent implements OnInit {
   }
   model = new User('','');
 
+  /**
+   * if the given passwords match, the register function from the service is called
+   * @function
+   */
   onRegister() {
     if(this.model.password !== this.model.password2) {
       this.errorDialog();
@@ -27,6 +36,10 @@ export class RegisterComponent implements OnInit {
     this.webService.register(this.model.username, this.model.password);
   }
 
+  /**
+   * show an error message if the given passowrds do not match
+   * @function
+   */
   errorDialog() {
     this.snackBar.openFromComponent(SuccessDialogComponent, {
       duration: 2000,
@@ -36,6 +49,10 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  /**
+   * go back to the login screen
+   * @function
+   */
   onBack() {
     this.router.navigate(['login']);
   }

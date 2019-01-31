@@ -6,6 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.css']
 })
+/**
+ * simple dialog that is used to confirm delete action
+ * @class
+ */
 export class ConfirmationDialogComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>,

@@ -11,6 +11,10 @@ import { AuthenticationService } from '../authentication.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+/**
+ * component that provides gui to log a user in
+ * @class
+ */
 export class LoginComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, private router: Router, 
@@ -21,6 +25,10 @@ export class LoginComponent implements OnInit {
 
   model = new User('', '');
 
+  /**
+   * logs a user in on the server and stores the given webtoken if the login was successfull
+   * @function
+   */
   onLogin() {
     this.webService.login(this.model.username, this.model.password)
     .subscribe(token => {
@@ -34,6 +42,10 @@ export class LoginComponent implements OnInit {
     );;
   }
 
+  /**
+   * show error message if login failed
+   * @function
+   */
   errorDialog() {
     this.snackBar.openFromComponent(SuccessDialogComponent, {
       duration: 2000,
@@ -43,6 +55,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * navigate to "Register" screen
+   * @function
+   */
   onSwitchToRegister() {
     this.router.navigate(['register']);
   }

@@ -10,6 +10,10 @@ import { MatSnackBar } from '@angular/material';
   templateUrl: './new.component.html',
   styleUrls: ['./new.component.css']
 })
+/**
+ * component that provides a gui to create a new booking
+ * @class
+ */
 export class NewComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, private router: Router,
@@ -24,6 +28,10 @@ export class NewComponent implements OnInit {
 
   model = new Booking(0,null, '', 1, 0);
 
+  /**
+   * calls the "book" function of the services with the given values from the gui
+   * @function
+   */
   onBook() {
     this.webService.book(this.model)
       .subscribe(() => {
@@ -32,6 +40,10 @@ export class NewComponent implements OnInit {
       });
   }
 
+  /**
+   * show a small success dialog if the booking was saves successfully
+   * @function
+   */
   successDialog() {
     this.snackBar.openFromComponent(SuccessDialogComponent, {
       duration: 2000,
@@ -41,6 +53,10 @@ export class NewComponent implements OnInit {
     });
   }
 
+  /**
+   * go back to "overview" screen
+   * @function
+   */
   onBack() {
     this.router.navigate(['overview']);
   }

@@ -11,6 +11,11 @@ import { DatePipe } from '@angular/common';
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.css']
 })
+
+/**
+ * component that provides a GUI to update a booking
+ * @class
+ */
 export class UpdateComponent implements OnInit {
 
   constructor(private webService: WebinterfaceService, 
@@ -20,6 +25,7 @@ export class UpdateComponent implements OnInit {
               private snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    //get the id from the booking we want to edit from the url and load it from the server to the gui
     this.route.params.subscribe(params => {
       if(params['id']) {
         this.webService.getBooking(params['id']).subscribe((booking) => {
@@ -32,6 +38,10 @@ export class UpdateComponent implements OnInit {
 
   model = new Booking(0, null, '', 1, 0);
 
+  /**
+   * calls webservice update mehtod with values from gui
+   * @function
+   */
   onUpdate() {
     this.webService.update(this.model)
     .subscribe(() => {
@@ -39,10 +49,18 @@ export class UpdateComponent implements OnInit {
     });
   }
 
+  /**
+   * returns the user to "bookings" page
+   * "bookings" page is the only page that can call "update" page
+   * @function
+   */
   onBack() {
     this.router.navigate(['bookings']);
   }
 
+  /**
+   * show a notification if the booking was updated successfully
+   */
   successDialog() {
     this.snackBar.openFromComponent(SuccessDialogComponent, {
       duration: 2000,
