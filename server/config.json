@@ -5,5 +5,8 @@
         "user": "myspendings",
         "password": "passwort1234"
     },
-    "secret": "mySuperSecret"
+    "secret": "mySuperSecret",
+    "server": {
+        "port": 3000
+    }
 }

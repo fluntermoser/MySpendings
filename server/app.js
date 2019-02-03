@@ -13,9 +13,10 @@
  */
 var express = require('express');
 var routing = require('./router.js');
+var config = require('./config.json');
 
 var app = express();
 app.use('/', routing);
-app.listen(3000, function () {
-  console.log('Spendings app listening on port 3000!');
+app.listen(config.server.port, function () {
+  console.log(`Spendings app listening on port ${config.server.port}!`);
 });

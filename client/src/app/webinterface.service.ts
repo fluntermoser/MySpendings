@@ -8,6 +8,8 @@ import { catchError, retry } from 'rxjs/operators';
 import { Balance } from './balance';
 import { Booking } from './booking';
 import { BookingFilter } from './booking-filter';
+import { Sha1 } from './sha1';
+import { AppConfig } from 'src/assets/app-config';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,7 @@ import { BookingFilter } from './booking-filter';
  */
 export class WebinterfaceService {
 
-  api = "http://localhost:3000";
+  api = AppConfig.settings.server.location;
 
   constructor(private authService: AuthenticationService,
     private http: HttpClient, private router: Router) { }
@@ -43,7 +45,8 @@ export class WebinterfaceService {
    * @param password 
    */
   login(username: string, password: string) {
-    return this.http.post<Token>(this.api + '/login', { username, password }, this.getHttpOptions());
+    let sha1Pwd = Sha1.hash(password);
+    return this.http.post<Token>(this.api + '/login', { username, password: sha1Pwd }, this.getHttpOptions());
   }
 
   /**
@@ -53,7 +56,8 @@ export class WebinterfaceService {
    * @param password 
    */
   register(username: string, password: string) {
-    return this.http.post<Token>(this.api + '/register', { username, password }, this.getHttpOptions())
+    let sha1Pwd = Sha1.hash(password);
+    return this.http.post<Token>(this.api + '/register', { username, password: sha1Pwd }, this.getHttpOptions())
       .pipe(catchError(this.handleError.bind(this))
       ).subscribe(token => {
         if (token.auth) {

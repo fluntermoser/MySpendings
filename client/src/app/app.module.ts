@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,10 +13,15 @@ import { GetBookingsComponent } from './get-bookings/get-bookings.component';
 import { SuccessDialogComponent } from './success-dialog/success-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material';
-import {MatDialogModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material';
 import { DatePipe } from '@angular/common';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { AppConfig } from 'src/assets/app-config';
+
+export function initializeApp(appConfig: AppConfig) {
+  return () => appConfig.load();
+}
 
 @NgModule({
   declarations: [
@@ -35,7 +40,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-  BrowserAnimationsModule,
+    BrowserAnimationsModule,
     MatSnackBarModule,
     MatDialogModule,
     FormsModule
@@ -44,7 +49,12 @@ import { NavbarComponent } from './navbar/navbar.component';
     SuccessDialogComponent,
     ConfirmationDialogComponent,
   ],
-  providers: [DatePipe],
+  providers: [AppConfig,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfig], multi: true
+    }, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

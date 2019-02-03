@@ -26,10 +26,13 @@ export class GetBookingsComponent implements OnInit {
 
   bookings: Booking[];
   filter: BookingFilter;
+  sum: number = 0;
+  balance: number;
 
   ngOnInit() {
     //load bookings right after the user opened the page
     this.loadBookings();
+    this.loadBalance();
   }
 
   /**
@@ -43,13 +46,27 @@ export class GetBookingsComponent implements OnInit {
     });
   }
 
+  loadBalance() {
+    this.webService.getBalance().subscribe(bal => {
+      if(bal.balance) {
+        this.balance = bal.balance;
+      }
+    });
+  }
+
   /**
    * binds all bookings that where returned by the server to the bookings object of this page
    * @function
    * @param bookings 
    */
   bindBookings(bookings: Booking[]) {
+    this.sum = 0;
     bookings.forEach(b => {
+      if(b.type === 0) {
+        this.sum -= b.amount;
+      } else {
+        this.sum += b.amount;
+      }
       if (b.date) {
         b.dateString = new Date(b.date).toLocaleDateString();
       }
@@ -86,6 +103,7 @@ export class GetBookingsComponent implements OnInit {
       if (result) {
         this.webService.delete(event.target.value).subscribe(() => {
           this.loadBookings();
+          this.loadBalance();
         });
       }
     });

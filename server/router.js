@@ -21,7 +21,6 @@ router.use(function (req, res, next) {
 
 var database = new Database();
 var crypto = new Crypto();
-
 /**
  * register route manages new users and returns a jwt if login was successfull
  * @method POST
