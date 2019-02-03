@@ -1,5 +1,5 @@
 # MySpendings
-The whole project is split in to seperate applications 
+The whole project is split in two seperate applications 
 because we want to be able to use the same server and database for multiple clients
 (e.g. WebApplication and Android App use the same server to comunicate with)
 
