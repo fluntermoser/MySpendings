@@ -14,11 +14,12 @@ Server:
 - (optional) change server port in /server/config.json
 - enter a secret Key in /server/config.json file
 - open command prompt go to /server/ folder and run "npm install"
-- start server using "node /server/app.js"
+- start server using "node app.js"
 
 Client:
 - (optional) configure server location in /client/src/assets/config/config.json
-- open command prompt go to /client/ folder and run "npm install"
+- (optional if angular is not installed) open command prompt, go to /client/ folder and run "npm install -g @angular/cli"
+- in /client/ folder run "npm install"
 - start client using "ng serve --open"
 
 (starting server and client on one machine requires using two terminals)
